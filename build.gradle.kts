@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.arbjerg"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -27,8 +27,8 @@ gradlePlugin {
             tags = setOf("lavalink", "discord")
         }
 
-        website = "https://github.com/lavalink-devs/gradle-plugin"
-        vcsUrl = "https://github.com/lavalink-devs/gradle-plugin"
+        website = "https://github.com/lavalink-devs/lavalink-gradle-plugin"
+        vcsUrl = "https://github.com/lavalink-devs/lavalink-gradle-plugin"
     }
 }
 
