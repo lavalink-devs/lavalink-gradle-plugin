@@ -19,6 +19,7 @@ internal val Project.extension get() = extensions.getByName<LavalinkExtension>(l
 class LavalinkGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            check(plugins.hasPlugin("org.gradle.java")) { "Please apply the Java/Kotlin plugin before Lavalink" }
             configureExtension()
             val serverDependency = configureDependencies()
             configureTasks(serverDependency)
@@ -32,7 +33,7 @@ private fun Project.configureExtension(): LavalinkExtension {
         version.convention(provider { project.version.toString() })
         name.convention(project.name)
         path.convention(provider { project.group.toString() })
-        serverVersion.convention(version)
+        serverVersion.convention(apiVersion)
     }
 }
 
@@ -75,10 +76,12 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
         }
 
         val jar = named<Jar>("jar") {
-            configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts
-                .mapNotNull { dep -> dep.file }.forEach {
-                    from(zipTree(it))
-                }
+            doFirst {
+                configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts
+                    .mapNotNull { dep -> dep.file }.forEach {
+                        from(zipTree(it))
+                    }
+            }
         }
 
         val installPlugin by registering(Copy::class) {
