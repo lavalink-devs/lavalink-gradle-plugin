@@ -10,12 +10,6 @@ version = "1.0.0"
 
 repositories {
     mavenCentral()
-    maven("https://maven.arbjerg.dev/releases") {
-        credentials {
-            username = System.getenv("MAVEN_USERNAME")
-            password = System.getenv("MAVEN_PASSWORD")
-        }
-    }
 }
 
 kotlin {
@@ -35,5 +29,16 @@ gradlePlugin {
 
         website = "https://github.com/lavalink-devs/gradle-plugin"
         vcsUrl = "https://github.com/lavalink-devs/gradle-plugin"
+    }
+}
+
+publishing {
+    repositories {
+        maven("https://maven.arbjerg.dev/releases") {
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
     }
 }
