@@ -30,7 +30,7 @@ gradlePlugin {
 
             displayName = "Lavalink Gradle Plugin"
             description = "Gradle plugin which makes it easier to create Lavalink plugins"
-            tags = setOf("lavalink", "plugin", "discord")
+            tags = setOf("lavalink", "discord")
         }
 
         website = "https://github.com/lavalink-devs/gradle-plugin"
