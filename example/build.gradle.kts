@@ -5,7 +5,7 @@ plugins {
     id("dev.arbjerg.lavalink.gradle-plugin")
 }
 
-group = "dev.schlaubi.lavalink.example"
+group = "dev.arbjerg.lavalink.example"
 version = "1.0.0"
 
 dependencies {

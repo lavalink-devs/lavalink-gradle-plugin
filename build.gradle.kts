@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-group = "dev.schlaubi"
+group = "dev.arbjerg"
 version = "1.0.0"
 
 repositories {

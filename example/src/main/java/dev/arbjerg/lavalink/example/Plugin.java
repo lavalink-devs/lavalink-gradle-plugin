@@ -1,4 +1,4 @@
-package dev.schlaubi.lavalink.example;
+package dev.arbjerg.lavalink.example;
 
 import dev.arbjerg.lavalink.api.ISocketContext;
 import dev.arbjerg.lavalink.api.PluginEventHandler;
