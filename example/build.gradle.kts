@@ -1,5 +1,3 @@
-import dev.arbjerg.lavalink.gradle.gitHash
-
 plugins {
     java
     id("dev.arbjerg.lavalink.gradle-plugin")
