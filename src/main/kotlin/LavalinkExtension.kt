@@ -37,9 +37,9 @@ interface LavalinkExtension {
      * The plugins root package (if different to [Project.getGroup]).
      */
     val path: Property<String>
-}
 
-/**
- * Creates a Lavalink version for [gitHash].
- */
-fun gitHash(gitHash: String) = "$gitHash-SNAPSHOT"
+    /**
+     * Creates a Lavalink version for [gitHash].
+     */
+    fun gitHash(gitHash: String) = "$gitHash-SNAPSHOT"
+}
