@@ -1,6 +1,6 @@
 # Lavalink Gradle Plugin
 
-[![Download](https://img.shields.io/gradle-plugin-portal/v/dev.arbjerg.lavalink.gradle-plugin)](https://plugins.gradle.org/plugin/cdev.arbjerg.lavalink.gradle-plugin)
+[![Download](https://img.shields.io/gradle-plugin-portal/v/dev.arbjerg.lavalink.gradle-plugin)](https://plugins.gradle.org/plugin/dev.arbjerg.lavalink.gradle-plugin)
 
 
 Gradle plugin which makes it easier to create Lavalink plugins
