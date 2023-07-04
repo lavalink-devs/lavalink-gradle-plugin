@@ -12,6 +12,12 @@ dependencies {
     implementation(kotlin("stdlib", "1.8.22"))
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 lavalinkPlugin {
     apiVersion = "4.0.0-beta.1"
     serverVersion = gitHash("fc51c58e0168b63cc9d6ed37f1adc7ef369c46a3")

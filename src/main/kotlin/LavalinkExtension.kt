@@ -2,6 +2,8 @@ package dev.arbjerg.lavalink.gradle
 
 import org.gradle.api.provider.Property
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderConvertible
 
 /**
  * Lavalink specific configuration options.
@@ -42,4 +44,14 @@ interface LavalinkExtension {
      * Creates a Lavalink version for [gitHash].
      */
     fun gitHash(gitHash: String) = "$gitHash-SNAPSHOT"
+
+    /**
+     * Creates a Lavalink version for [gitHash].
+     */
+    fun gitHash(gitHash: Provider<String>) = gitHash.map { gitHash(it) }
+
+    /**
+     * Creates a Lavalink version for [gitHash].
+     */
+    fun gitHash(gitHash: ProviderConvertible<String>) = gitHash(gitHash.asProvider())
 }
