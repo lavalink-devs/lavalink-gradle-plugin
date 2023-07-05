@@ -5,10 +5,12 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.nio.file.Path
-import javax.inject.Inject
 import kotlin.io.path.div
 
 internal val Project.lavalinkJar: Provider<Path>
@@ -16,11 +18,16 @@ internal val Project.lavalinkJar: Provider<Path>
         project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions" / extension.serverVersion.get() / "Lavalink.jar"
     }
 
-abstract class DownloadLavalinkTask @Inject constructor(private val dependencyProvider: Provider<Dependency>) :
-    DefaultTask() {
+abstract class DownloadLavalinkTask : DefaultTask() {
+    @get:Internal
+    internal abstract val dependencyProvider: Property<Dependency>
+
+    @Suppress("unused") // only exists for input snapshotting
+    @get:Input
+    val version: Provider<String>
+        get() = dependencyProvider.map { it.version!! }
 
     init {
-        inputs.property("dependency", dependencyProvider.map { it.version.toString() })
         outputs.dir(project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions")
     }
 

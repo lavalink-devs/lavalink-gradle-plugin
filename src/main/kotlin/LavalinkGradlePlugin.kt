@@ -39,13 +39,13 @@ private fun Project.configureExtension(): LavalinkExtension {
 private fun Project.configureDependencies(): Provider<Dependency> {
     project.repositories {
         mavenCentral()
+        maven("https://jitpack.io")
         // Required for runtime
         maven("https://maven.arbjerg.dev/releases")
         maven("https://maven.arbjerg.dev/snapshots")
         // Required for Lavalink Dependencies
         @Suppress("DEPRECATION")
         jcenter()
-        maven("https://jitpack.io")
     }
 
     dependencies {
@@ -96,14 +96,17 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
         val installPlugin by registering(Copy::class) {
             from(jar)
             into(project.testServerFolder)
+            // This always deletes old versions of the plugin in the test server
+            // So we don't install the same plugin twice
             rename { "plugin.jar" }
         }
 
-        val downloadTask =
-            register("downloadLavalink", DownloadLavalinkTask::class.java, constructorArgs = arrayOf(serverDependency))
+        val downloadLavalink by registering(DownloadLavalinkTask::class) {
+            dependencyProvider = serverDependency
+        }
 
         register<RunLavalinkTask>("runLavaLink") {
-            dependsOn(installPlugin, downloadTask)
+            dependsOn(installPlugin, downloadLavalink)
         }
     }
 }

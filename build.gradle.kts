@@ -1,12 +1,12 @@
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish") version "1.1.0"
+    alias(libs.plugins.gradle.publish)
     `maven-publish`
 }
 
 group = "dev.arbjerg"
-version = "1.0.5"
+version = "1.0.6"
 
 repositories {
     mavenCentral()

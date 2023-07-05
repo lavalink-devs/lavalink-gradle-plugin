@@ -9,7 +9,7 @@ import org.gradle.api.provider.ProviderConvertible
 /**
  * Creates a Lavalink dependency with name [module].
  */
-fun Project.lavalink(module: String, group: String = "dev.arbjerg.lavalink") = extension.apiVersion.map { version ->
+fun Project.lavalink(module: String, group: String = "dev.arbjerg.lavalink"): Provider<Dependency> = extension.apiVersion.map { version ->
     dependencies.create("$group:$module:$version")
 }
 
