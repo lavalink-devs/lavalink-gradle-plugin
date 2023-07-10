@@ -4,7 +4,6 @@ import dev.arbjerg.lavalink.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
@@ -75,22 +74,12 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
         }
 
         val jar = named<Jar>("jar") {
-            // Workaround for Gradle only depending on the classes task, but this approach needing the actual jar file
-            configurations.getByName("runtimeClasspath").dependencies.filterIsInstance<ProjectDependency>()
-                .forEach {
-                    val jarTask = it.dependencyProject.tasks.findByPath("jar")
-                    if (jarTask != null) {
-                        dependsOn(jarTask)
-                    } else {
-                        logger.warn("Could not autoconfigure project dependency for ${it.dependencyProject.path} you might need to create a task dependency manually")
+            configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts
+                .mapNotNull { dep -> dep.file }.forEach {
+                    from(zipTree(it)) {
+                        exclude("META-INF/**")
                     }
                 }
-            doFirst {
-                configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts
-                    .mapNotNull { dep -> dep.file }.forEach {
-                        from(zipTree(it))
-                    }
-            }
         }
 
         val installPlugin by registering(Copy::class) {

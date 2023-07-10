@@ -10,6 +10,7 @@ dependencies {
     // Only here to test dependency handling
     // And Kotlin is best dependency <3
     implementation(kotlin("stdlib", "1.8.22"))
+    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.5.1")
 }
 
 java {
