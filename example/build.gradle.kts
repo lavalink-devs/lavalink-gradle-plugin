@@ -20,6 +20,6 @@ java {
 }
 
 lavalinkPlugin {
-    apiVersion = "4.0.0-beta.1"
+    apiVersion = "4.0.0-beta.3"
     serverVersion = gitHash("fc51c58e0168b63cc9d6ed37f1adc7ef369c46a3")
 }
