@@ -52,7 +52,10 @@ private fun Project.configureDependencies(): Provider<Dependency> {
     }
 
     return extension.serverVersion.map { serverVersion ->
-        project.dependencies.create("dev.arbjerg.lavalink:Lavalink-Server:$serverVersion")
+        project.dependencies.create("dev.arbjerg.lavalink:Lavalink-Server:$serverVersion@jar") {
+            // we only care about the full executable jar here, so no dependencies required
+            isTransitive = false
+        }
     }
 }
 

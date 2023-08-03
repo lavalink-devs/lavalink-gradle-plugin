@@ -37,10 +37,13 @@ abstract class DownloadLavalinkTask : DefaultTask() {
         val configuration = project.configurations.detachedConfiguration(dependency)
             .markResolvable()
 
-        val archive = configuration.resolve().first {
+        val files = configuration.resolve()
+        logger.debug("Resolved Lavalink dependencies to: {}", files)
+        val archive = files.single {
             it.name.endsWith(".jar")
                     && "plain" !in it.name && "sources" !in it.name && "javadoc" !in it.name
         }
+        logger.debug("Resolved lavalink binary to: {}", archive.name)
         val path = project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions" / dependency.version!!
 
         didWork = project.copy {
