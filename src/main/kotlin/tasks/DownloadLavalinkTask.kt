@@ -37,7 +37,7 @@ abstract class DownloadLavalinkTask : DefaultTask() {
         val configuration = project.configurations.detachedConfiguration(dependency)
             .markResolvable()
 
-        val archive = configuration.resolve().single {
+        val archive = configuration.resolve().first {
             it.name.endsWith(".jar")
                     && "plain" !in it.name && "sources" !in it.name && "javadoc" !in it.name
         }
