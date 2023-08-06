@@ -5,6 +5,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.properties
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.util.*
@@ -18,6 +19,7 @@ internal val Project.generatedPluginManifest: Path
 abstract class GeneratePluginPropertiesTask : DefaultTask() {
 
     init {
+        group = LifecycleBasePlugin.BUILD_GROUP
         val extension = project.extension
         inputs.properties(
             "version" to extension.version,

@@ -1,5 +1,6 @@
 package dev.arbjerg.lavalink.gradle.tasks
 
+import dev.arbjerg.lavalink.gradle.LavalinkGradlePlugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.gradle.api.tasks.JavaExec
@@ -12,6 +13,7 @@ internal val Project.testServerFolder
 abstract class RunLavalinkTask : JavaExec() {
     init {
         mainClass = "org.springframework.boot.loader.JarLauncher"
+        group = LavalinkGradlePlugin.TASK_GROUP_NAME
         outputs.upToDateWhen { false }
     }
 

@@ -1,5 +1,6 @@
 package dev.arbjerg.lavalink.gradle.tasks
 
+import dev.arbjerg.lavalink.gradle.LavalinkGradlePlugin
 import dev.arbjerg.lavalink.gradle.extension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -28,6 +29,7 @@ abstract class DownloadLavalinkTask : DefaultTask() {
         get() = dependencyProvider.map { it.version!! }
 
     init {
+        group = LavalinkGradlePlugin.TASK_GROUP_NAME
         outputs.dir(project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions")
     }
 

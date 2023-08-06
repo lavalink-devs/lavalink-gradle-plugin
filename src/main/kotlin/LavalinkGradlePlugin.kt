@@ -24,6 +24,10 @@ class LavalinkGradlePlugin : Plugin<Project> {
             configureSourceSets()
         }
     }
+
+    companion object {
+        const val TASK_GROUP_NAME = "lavalink"
+    }
 }
 
 private fun Project.configureExtension(): LavalinkExtension {
