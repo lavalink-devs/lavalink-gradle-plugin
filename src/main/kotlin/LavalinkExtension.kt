@@ -4,6 +4,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderConvertible
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 /**
  * Lavalink specific configuration options.
@@ -39,6 +41,11 @@ interface LavalinkExtension {
      * The plugins root package (if different to [Project.getGroup]).
      */
     val path: Property<String>
+
+    /**
+     * Whether to configure publishing automatically or nor.
+     */
+    val configurePublishing: Property<Boolean>
 
     /**
      * Creates a Lavalink version for [gitHash].

@@ -5,20 +5,25 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
 private const val lavalinkExtensionName = "lavalinkPlugin"
 
-internal val Project.extension get() = extensions.getByName<LavalinkExtension>(lavalinkExtensionName)
+internal val Project.extension
+    get() = extensions.getByName<LavalinkExtension>(lavalinkExtensionName)
 
 class LavalinkGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             check(plugins.hasPlugin("org.gradle.java")) { "Please apply the Java/Kotlin plugin before Lavalink" }
             configureExtension()
+            configurePublishing()
             val serverDependency = configureDependencies()
             configureTasks(serverDependency)
             configureSourceSets()
@@ -36,6 +41,7 @@ private fun Project.configureExtension(): LavalinkExtension {
         name.convention(project.name)
         path.convention(provider { project.group.toString() })
         serverVersion.convention(apiVersion)
+        configurePublishing.convention(true)
     }
 }
 
@@ -59,6 +65,20 @@ private fun Project.configureDependencies(): Provider<Dependency> {
         project.dependencies.create("dev.arbjerg.lavalink:Lavalink-Server:$serverVersion@jar") {
             // we only care about the full executable jar here, so no dependencies required
             isTransitive = false
+        }
+    }
+}
+
+private fun Project.configurePublishing() {
+    afterEvaluate {
+        if (extension.configurePublishing.get()) {
+            configure<PublishingExtension> {
+                publications {
+                    create<MavenPublication>("maven") {
+                        from(components["java"])
+                    }
+                }
+            }
         }
     }
 }
