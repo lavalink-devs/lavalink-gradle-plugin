@@ -7,9 +7,9 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
@@ -72,6 +72,7 @@ private fun Project.configureDependencies(): Provider<Dependency> {
 private fun Project.configurePublishing() {
     afterEvaluate {
         if (extension.configurePublishing.get()) {
+            apply<MavenPublishPlugin>()
             configure<PublishingExtension> {
                 publications {
                     create<MavenPublication>("maven") {
