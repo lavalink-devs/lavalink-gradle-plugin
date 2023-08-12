@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
+import kotlin.io.path.div
 
 private const val lavalinkExtensionName = "lavalinkPlugin"
 
@@ -117,12 +118,18 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
                 .allDependencies
                 .filterIsInstance<ProjectDependency>()
                 .forEach {
-                    val classes = it.dependencyProject.tasks.named("classes")
-                        .map { classes ->
-                            classes.taskDependencies.getDependencies(classes)
+                    val project = it.dependencyProject
+                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+                        dependsOn(project.tasks.named("jvmMainClasses"))
+                        from(project.buildDir.toPath() / "classes" / "kotlin" / "jvm" / "main") {
+                            include("**/*.class")
                         }
-
-                    from(classes)
+                    } else {
+                        dependsOn(project.tasks.named("classes"))
+                        from(project.buildDir.toPath() / "classes" / "java" / "main") {
+                            include("**/*.class")
+                        }
+                    }
                 }
         }
 
