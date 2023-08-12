@@ -29,3 +29,5 @@ jobs:
           MAVEN_USERNAME: ${{ vars.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
         run: ./gradlew publish publishPlugins
+      - name: Release
+        uses: softprops/action-gh-release@v1

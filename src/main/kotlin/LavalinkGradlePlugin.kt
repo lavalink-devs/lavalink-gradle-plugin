@@ -4,6 +4,7 @@ import dev.arbjerg.lavalink.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -102,11 +103,26 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
         }
 
         val jar = named<Jar>("jar") {
-            configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts
-                .mapNotNull { dep -> dep.file }.forEach {
+            configurations.getByName("runtimeClasspath")
+                .fileCollection {
+                    it !is ProjectDependency
+                }
+                .forEach {
                     from(zipTree(it)) {
                         exclude("META-INF/**")
                     }
+                }
+
+            configurations.getByName("runtimeClasspath")
+                .allDependencies
+                .filterIsInstance<ProjectDependency>()
+                .forEach {
+                    val classes = it.dependencyProject.tasks.named("classes")
+                        .map { classes ->
+                            classes.taskDependencies.getDependencies(classes)
+                        }
+
+                    from(classes)
                 }
         }
 
