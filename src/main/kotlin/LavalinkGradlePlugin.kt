@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -117,8 +118,8 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
             configurations.getByName("runtimeClasspath")
                 .allDependencies
                 .filterIsInstance<ProjectDependency>()
-                .forEach {
-                    val project = it.dependencyProject
+                .forEach { dependency ->
+                    val project = dependency.dependencyProject
                     if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
                         dependsOn(project.tasks.named("jvmMainClasses"))
                         from(project.buildDir.toPath() / "classes" / "kotlin" / "jvm" / "main") {
@@ -126,8 +127,11 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
                         }
                     } else {
                         dependsOn(project.tasks.named("classes"))
-                        from(project.buildDir.toPath() / "classes" / "java" / "main") {
-                            include("**/*.class")
+                        from(project.buildDir.toPath() / "classes") {
+                            include("**/main/**/*.class")
+                            eachFile {
+                                path = path.substringAfter("main/")
+                            }
                         }
                     }
                 }
