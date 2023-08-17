@@ -5,7 +5,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -14,7 +13,6 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
-import kotlin.io.path.div
 
 private const val lavalinkExtensionName = "lavalinkPlugin"
 
@@ -122,12 +120,12 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
                     val project = dependency.dependencyProject
                     if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
                         dependsOn(project.tasks.named("jvmMainClasses"))
-                        from(project.buildDir.toPath() / "classes" / "kotlin" / "jvm" / "main") {
+                        from(project.layout.buildDirectory.file("classes/kotlin/jvm/main")) {
                             include("**/*.class")
                         }
                     } else {
                         dependsOn(project.tasks.named("classes"))
-                        from(project.buildDir.toPath() / "classes") {
+                        from(project.layout.buildDirectory.dir("classes")) {
                             include("**/main/**/*.class")
                             eachFile {
                                 path = path.substringAfter("main/")

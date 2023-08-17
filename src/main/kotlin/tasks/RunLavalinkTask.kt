@@ -2,13 +2,13 @@ package dev.arbjerg.lavalink.gradle.tasks
 
 import dev.arbjerg.lavalink.gradle.LavalinkGradlePlugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
-import kotlin.io.path.div
+import org.gradle.kotlin.dsl.assign
+import org.gradle.kotlin.dsl.environment
 
 internal val Project.testServerFolder
-    get() = project.buildDir.toPath() / "lavalink-test-server-plugins"
+    get() = project.layout.buildDirectory.dir("lavalink-test-server-plugins")
 
 abstract class RunLavalinkTask : JavaExec() {
     init {
@@ -21,7 +21,7 @@ abstract class RunLavalinkTask : JavaExec() {
     override fun exec() {
         workingDir(project.rootDir)
         configureClassPath()
-        environment("lavalink.pluginsDir" to project.testServerFolder)
+        environment("lavalink.pluginsDir" to project.testServerFolder.get())
         super.exec()
     }
 
