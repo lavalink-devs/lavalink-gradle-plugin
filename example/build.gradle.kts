@@ -20,6 +20,6 @@ java {
 }
 
 lavalinkPlugin {
-    apiVersion = "4.0.0-beta.3"
-    serverVersion = "4.0.0-beta.3"
+    apiVersion = "4.0.0"
+    serverVersion = "4.0.0"
 }
