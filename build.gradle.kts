@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.arbjerg"
-version = "1.0.16"
+version = "1.0.18"
 
 repositories {
     mavenCentral()
