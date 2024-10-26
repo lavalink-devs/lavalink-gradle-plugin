@@ -33,7 +33,7 @@ gradlePlugin {
 
 publishing {
     repositories {
-        maven("https://maven.arbjerg.dev/releases") {
+        maven("https://maven.lavalink.dev/releases") {
             credentials {
                 username = System.getenv("MAVEN_USERNAME")
                 password = System.getenv("MAVEN_PASSWORD")
