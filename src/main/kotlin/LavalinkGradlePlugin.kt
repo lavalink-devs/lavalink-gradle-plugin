@@ -51,8 +51,8 @@ private fun Project.configureDependencies(): Provider<Dependency> {
         mavenCentral()
         maven("https://jitpack.io")
         // Required for runtime
-        maven("https://maven.arbjerg.dev/releases")
-        maven("https://maven.arbjerg.dev/snapshots")
+        maven("https://maven.lavalink.dev/releases")
+        maven("https://maven.lavalink.dev/snapshots")
         // Required for Lavalink Dependencies
         @Suppress("DEPRECATION")
         jcenter()
