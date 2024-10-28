@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -53,9 +54,7 @@ private fun Project.configureDependencies(): Provider<Dependency> {
         // Required for runtime
         maven("https://maven.lavalink.dev/releases")
         maven("https://maven.lavalink.dev/snapshots")
-        // Required for Lavalink Dependencies
-        @Suppress("DEPRECATION")
-        jcenter()
+
     }
 
     dependencies {
@@ -104,9 +103,10 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
 
         val jar = named<Jar>("jar") {
             configurations.getByName("runtimeClasspath")
-                .fileCollection {
-                    it !is ProjectDependency
-                }
+                .incoming
+                .artifactView {
+                    componentFilter { it is ProjectComponentIdentifier }
+                }.artifacts
                 .forEach {
                     from(zipTree(it)) {
                         exclude("META-INF/**")

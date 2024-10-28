@@ -9,8 +9,8 @@ version = "1.0.0"
 dependencies {
     // Only here to test dependency handling
     // And Kotlin is best dependency <3
-    implementation(kotlin("stdlib", "1.9.21"))
-    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.6.2")
+    implementation(kotlin("stdlib", "2.0.21"))
+    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.7.3")
 }
 
 java {
@@ -20,6 +20,6 @@ java {
 }
 
 lavalinkPlugin {
-    apiVersion = "4.0.0"
-    serverVersion = "4.0.0"
+    apiVersion = "4.0.8"
+    serverVersion = "4.0.8"
 }
