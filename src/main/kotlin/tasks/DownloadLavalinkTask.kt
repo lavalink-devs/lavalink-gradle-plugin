@@ -6,12 +6,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.nio.file.Path
+import javax.inject.Inject
 import kotlin.io.path.div
 
 internal val Project.lavalinkJar: Provider<Path>
@@ -23,6 +25,9 @@ abstract class DownloadLavalinkTask : DefaultTask() {
     @get:Internal
     internal abstract val dependencyProvider: Property<Dependency>
 
+    @get:Inject
+    abstract val fs: FileSystemOperations
+
     @Suppress("unused") // only exists for input snapshotting
     @get:Input
     val version: Provider<String>
@@ -33,10 +38,14 @@ abstract class DownloadLavalinkTask : DefaultTask() {
         outputs.dir(project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions")
     }
 
+    private val configurations = project.configurations
+
+    private val lavalinkPath = project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions"
+
     @TaskAction
     fun download() {
         val dependency = dependencyProvider.get()
-        val configuration = project.configurations.detachedConfiguration(dependency)
+        val configuration = configurations.detachedConfiguration(dependency)
             .markResolvable()
 
         val files = configuration.resolve()
@@ -46,9 +55,9 @@ abstract class DownloadLavalinkTask : DefaultTask() {
                     && "plain" !in it.name && "sources" !in it.name && "javadoc" !in it.name
         }
         logger.debug("Resolved lavalink binary to: {}", archive.name)
-        val path = project.gradle.gradleUserHomeDir.toPath() / "lavalink-versions" / dependency.version!!
+        val path = lavalinkPath / dependency.version!!
 
-        didWork = project.copy {
+        didWork = fs.copy {
             from(archive)
             rename { "Lavalink.jar" }
             into(path)

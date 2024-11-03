@@ -31,16 +31,18 @@ abstract class GeneratePluginPropertiesTask : DefaultTask() {
         outputs.dir(project.generatedPluginManifest)
     }
 
+    private val extension = project.extension
+    private val generatedPluginManifest = project.generatedPluginManifest
+
     @TaskAction
     fun generateTask() {
-        val extension = project.extension
         val properties = Properties().apply {
             set("version", extension.version.get())
             set("name", extension.name.get())
             set("path", extension.path.get())
         }
 
-        val file = project.generatedPluginManifest.get().asFile.toPath() / "lavalink-plugins" / "${extension.name.get()}.properties"
+        val file = generatedPluginManifest.get().asFile.toPath() / "lavalink-plugins" / "${extension.name.get()}.properties"
         file.parent.createDirectories()
         file.bufferedWriter(options = arrayOf(StandardOpenOption.CREATE)).use { writer ->
             properties.store(writer, null)
