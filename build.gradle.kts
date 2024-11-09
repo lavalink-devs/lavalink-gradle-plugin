@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.arbjerg"
-version = "1.1.1"
+version = "1.1.2"
 
 repositories {
     mavenCentral()
@@ -13,6 +13,10 @@ repositories {
 
 kotlin {
     jvmToolchain(17)
+}
+
+dependencies {
+    compileOnly(kotlin("gradle-plugin"))
 }
 
 gradlePlugin {

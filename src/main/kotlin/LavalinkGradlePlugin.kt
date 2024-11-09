@@ -4,8 +4,6 @@ import dev.arbjerg.lavalink.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -101,38 +99,44 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
             dependsOn(generatePluginProperties)
         }
 
-        val jar = named<Jar>("jar") {
+        val jar by named<Jar>("jar") {
             configurations.getByName("runtimeClasspath")
                 .incoming
                 .artifactView {
-                    componentFilter { it is ProjectComponentIdentifier }
+//                    componentFilter { it !is ProjectComponentIdentifier }
                 }.artifacts
                 .forEach {
-                    from(zipTree(it)) {
+                    from(zipTree(it.file)) {
                         exclude("META-INF/**")
                     }
                 }
 
-            configurations.getByName("runtimeClasspath")
-                .allDependencies
-                .filterIsInstance<ProjectDependency>()
-                .forEach { dependency ->
-                    val project = dependency.dependencyProject
-                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") && project.tasks.findByName("jvmMainClasses") != null) {
-                        dependsOn(project.tasks.named("jvmMainClasses"))
-                        from(project.layout.buildDirectory.file("classes/kotlin/jvm/main")) {
-                            include("**/*.class")
-                        }
-                    } else {
-                        dependsOn(project.tasks.named("classes"))
-                        from(project.layout.buildDirectory.dir("classes")) {
-                            include("**/main/**/*.class")
-                            eachFile {
-                                path = path.substringAfter("main/")
-                            }
-                        }
-                    }
-                }
+//            configurations.getByName("runtimeClasspath")
+//                .allDependencies
+//                .filterIsInstance<ProjectDependency>()
+//                .forEach { dependency ->
+//                    val project = dependency.dependencyProject
+//                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+//                        val compilationName = provider {
+//                            project.extensions.getByType<KotlinMultiplatformExtension>()
+//                                .targets
+//                                .first { it is KotlinJvmTarget }
+//                                .name
+//                        }
+//                        dependsOn(compilationName.flatMap { project.tasks.named("${it}MainClasses") })
+//                        from(compilationName.flatMap { targetName -> project.layout.buildDirectory.file("classes/kotlin/$targetName/main") }) {
+//                            include("**/*.class")
+//                        }
+//                    } else {
+//                        dependsOn(project.tasks.named("classes"))
+//                        from(project.layout.buildDirectory.dir("classes")) {
+//                            include("**/main/**/*.class")
+//                            eachFile {
+//                                path = path.substringAfter("main/")
+//                            }
+//                        }
+//                    }
+//                }
         }
 
         val installPlugin by registering(Copy::class) {
