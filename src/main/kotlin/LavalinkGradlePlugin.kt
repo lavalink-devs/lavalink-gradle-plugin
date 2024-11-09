@@ -118,7 +118,7 @@ private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
                 .filterIsInstance<ProjectDependency>()
                 .forEach { dependency ->
                     val project = dependency.dependencyProject
-                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") && project.tasks.findByName("jvmMainClasses") != null) {
                         dependsOn(project.tasks.named("jvmMainClasses"))
                         from(project.layout.buildDirectory.file("classes/kotlin/jvm/main")) {
                             include("**/*.class")
