@@ -22,10 +22,14 @@ abstract class GeneratePluginPropertiesTask : DefaultTask() {
     init {
         group = LifecycleBasePlugin.BUILD_GROUP
         val extension = project.extension
+        @Suppress("DEPRECATION")
         inputs.properties(
             "version" to extension.version,
             "name" to extension.name,
             "path" to extension.path,
+            "requires" to extension.requires,
+            "provider" to extension.provider.orElse(""),
+            "license" to extension.license.orElse(""),
         )
 
         outputs.dir(project.generatedPluginManifest)
@@ -37,15 +41,23 @@ abstract class GeneratePluginPropertiesTask : DefaultTask() {
     @TaskAction
     fun generateTask() {
         val properties = Properties().apply {
-            set("version", extension.version.get())
-            set("name", extension.name.get())
-            set("path", extension.path.get())
+            set("plugin.id", extension.name.get())
+            set("plugin.version", extension.version.get())
+            set("plugin.requires", extension.requires.get())
+            setIfPresent("plugin.provider", extension.provider)
+            setIfPresent("plugin.license", extension.license)
         }
 
-        val file = generatedPluginManifest.get().asFile.toPath() / "lavalink-plugins" / "${extension.name.get()}.properties"
+        val file = generatedPluginManifest.get().asFile.toPath() / "plugin.properties"
         file.parent.createDirectories()
         file.bufferedWriter(options = arrayOf(StandardOpenOption.CREATE)).use { writer ->
             properties.store(writer, null)
         }
+    }
+}
+
+private fun Properties.setIfPresent(name: String, value: Provider<String>) {
+    if (value.isPresent) {
+        setProperty(name, value.get())
     }
 }

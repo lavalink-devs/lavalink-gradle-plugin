@@ -4,14 +4,17 @@ import dev.arbjerg.lavalink.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.*
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 private const val lavalinkExtensionName = "lavalinkPlugin"
 
@@ -22,10 +25,10 @@ class LavalinkGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             check(plugins.hasPlugin("org.gradle.java")) { "Please apply the Java/Kotlin plugin before Lavalink" }
-            configureExtension()
+            val extension = configureExtension()
             configurePublishing()
             val serverDependency = configureDependencies()
-            configureTasks(serverDependency)
+            configureTasks(extension, serverDependency)
             configureSourceSets()
         }
     }
@@ -36,12 +39,14 @@ class LavalinkGradlePlugin : Plugin<Project> {
 }
 
 private fun Project.configureExtension(): LavalinkExtension {
+    @Suppress("DEPRECATION")
     return extensions.create<LavalinkExtension>(lavalinkExtensionName).apply {
         version.convention(provider { project.version.toString() })
         name.convention(project.name)
         path.convention(provider { project.group.toString() })
         serverVersion.convention(apiVersion)
         configurePublishing.convention(true)
+        requires.convention(serverVersion)
     }
 }
 
@@ -75,6 +80,7 @@ private fun Project.configurePublishing() {
                 publications {
                     create<MavenPublication>("maven") {
                         from(components["java"])
+                        artifact(tasks.named("assemblePlugin"))
                     }
                 }
             }
@@ -92,67 +98,79 @@ private fun Project.configureSourceSets() {
     }
 }
 
-private fun Project.configureTasks(serverDependency: Provider<Dependency>) {
+private fun Project.configureTasks(extension: LavalinkExtension, serverDependency: Provider<Dependency>) {
     tasks {
         val generatePluginProperties by registering(GeneratePluginPropertiesTask::class)
         named("processResources") {
             dependsOn(generatePluginProperties)
         }
 
-        val jar by named<Jar>("jar") {
-            configurations.getByName("runtimeClasspath")
-                .incoming
-                .artifactView {
-//                    componentFilter { it !is ProjectComponentIdentifier }
-                }.artifacts
-                .forEach {
-                    from(zipTree(it.file)) {
-                        exclude("META-INF/**")
-                    }
-                }
+        val jar by getting(Jar::class)
+        val collectPluginDependencies by registering(Copy::class) {
+            val destinationDirectory = layout.buildDirectory.dir("dependencies")
+            delete(destinationDirectory) // Delete old data
 
-//            configurations.getByName("runtimeClasspath")
-//                .allDependencies
-//                .filterIsInstance<ProjectDependency>()
-//                .forEach { dependency ->
-//                    val project = dependency.dependencyProject
-//                    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-//                        val compilationName = provider {
-//                            project.extensions.getByType<KotlinMultiplatformExtension>()
-//                                .targets
-//                                .first { it is KotlinJvmTarget }
-//                                .name
-//                        }
-//                        dependsOn(compilationName.flatMap { project.tasks.named("${it}MainClasses") })
-//                        from(compilationName.flatMap { targetName -> project.layout.buildDirectory.file("classes/kotlin/$targetName/main") }) {
-//                            include("**/*.class")
-//                        }
-//                    } else {
-//                        dependsOn(project.tasks.named("classes"))
-//                        from(project.layout.buildDirectory.dir("classes")) {
-//                            include("**/main/**/*.class")
-//                            eachFile {
-//                                path = path.substringAfter("main/")
-//                            }
-//                        }
-//                    }
-//                }
+            from({
+                val dependency =
+                    dependencies.create("dev.arbjerg.lavalink:Lavalink-Server:${extension.serverVersion.get()}") {
+                        // Old sedmelluq artifacts are still referenced at some places
+                        // but do not resolve anymore since jcenter is dead
+                        exclude(group = "com.sedmelluq")
+                    }
+
+                // Collect all dependencies lavalink depends on
+                val serverDependencies = configurations
+                    .detachedConfiguration(dependency)
+                    .resolvedConfiguration
+                    .resolvedArtifacts
+                    .map { it.moduleVersion.id.dependencyNotation }
+
+                // Remove them from the jar, to avoid conflicts
+                configurations.getByName("runtimeClasspath")
+                    .resolvedConfiguration
+                    .resolvedArtifacts
+                    .asSequence()
+                    .filter { it.moduleVersion.id.dependencyNotation !in serverDependencies }
+                    .mapNotNull { it.file }
+                    .toList()
+
+            })
+            into(destinationDirectory)
         }
 
-        val installPlugin by registering(Copy::class) {
-            from(jar)
-            into(project.testServerFolder)
-            // This always deletes old versions of the plugin in the test server
-            // So we don't install the same plugin twice
-            rename { "plugin.jar" }
+        register<Zip>("assemblePlugin") {
+            group = LifecycleBasePlugin.BUILD_GROUP
+            destinationDirectory = layout.buildDirectory.dir("distributions")
+            archiveBaseName = extension.name.map { "plugin-$it" }
+
+            dependsOn(jar)
+
+            into("classes") {
+                with(jar)
+                exclude("plugin.properties")
+                // Do not include legacy manifest
+                exclude("lavalink-plugins/**")
+            }
+
+            into("lib") {
+                from(collectPluginDependencies)
+            }
+
+            from(generatePluginProperties)
         }
 
         val downloadLavalink by registering(DownloadLavalinkTask::class) {
             dependencyProvider = serverDependency
         }
 
+        val classes by existing
+        val processResources by existing
+
         register<RunLavalinkTask>("runLavaLink") {
-            dependsOn(installPlugin, downloadLavalink)
+            dependsOn(downloadLavalink, classes, processResources)
         }
     }
 }
+
+val ModuleVersionIdentifier.dependencyNotation: String
+    get() = "$group:$name"

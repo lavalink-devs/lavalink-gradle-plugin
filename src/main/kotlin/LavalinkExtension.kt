@@ -40,7 +40,28 @@ interface LavalinkExtension {
     /**
      * The plugins root package (if different to [Project.getGroup]).
      */
+    @Deprecated("This property is no longer required")
     val path: Property<String>
+
+    /**
+     * The version of Lavalink this plugin requires (if different to [apiVersion]).
+     */
+    val requires: Property<String>
+
+    /**
+     * An optional description of the plugin.
+     */
+    val description: Property<String>
+
+    /**
+     * An optional mention of the plugin's author.
+     */
+    val provider: Property<String>
+
+    /**
+     * An optional license of the plugin.
+     */
+    val license: Property<String>
 
     /**
      * Whether to configure publishing automatically or nor.
