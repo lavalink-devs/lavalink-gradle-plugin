@@ -10,7 +10,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.*
@@ -29,7 +28,6 @@ class LavalinkGradlePlugin : Plugin<Project> {
             configurePublishing()
             val serverDependency = configureDependencies()
             configureTasks(extension, serverDependency)
-            configureSourceSets()
         }
     }
 
@@ -88,16 +86,6 @@ private fun Project.configurePublishing() {
     }
 }
 
-private fun Project.configureSourceSets() {
-    configure<SourceSetContainer> {
-        named("main") {
-            resources {
-                srcDir(project.generatedPluginManifest)
-            }
-        }
-    }
-}
-
 private fun Project.configureTasks(extension: LavalinkExtension, serverDependency: Provider<Dependency>) {
     tasks {
         val generatePluginProperties by registering(GeneratePluginPropertiesTask::class)
@@ -148,7 +136,6 @@ private fun Project.configureTasks(extension: LavalinkExtension, serverDependenc
 
             into("classes") {
                 with(jar)
-                exclude("plugin.properties")
                 // Do not include legacy manifest
                 exclude("lavalink-plugins/**")
             }
