@@ -1,7 +1,6 @@
 package dev.arbjerg.lavalink.gradle.tasks
 
 import dev.arbjerg.lavalink.gradle.LavalinkGradlePlugin
-import org.gradle.api.Project
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.assign

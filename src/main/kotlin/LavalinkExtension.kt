@@ -1,11 +1,9 @@
 package dev.arbjerg.lavalink.gradle
 
-import org.gradle.api.provider.Property
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderConvertible
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 
 /**
  * Lavalink specific configuration options.
