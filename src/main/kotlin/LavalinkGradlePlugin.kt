@@ -89,9 +89,6 @@ private fun Project.configurePublishing() {
 private fun Project.configureTasks(extension: LavalinkExtension, serverDependency: Provider<Dependency>) {
     tasks {
         val generatePluginProperties by registering(GeneratePluginPropertiesTask::class)
-        named("processResources") {
-            dependsOn(generatePluginProperties)
-        }
 
         val jar by getting(Jar::class)
         val collectPluginDependencies by registering(Copy::class) {
