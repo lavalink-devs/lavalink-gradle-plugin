@@ -142,6 +142,7 @@ private fun Project.configureTasks(extension: LavalinkExtension, serverDependenc
             group = LifecycleBasePlugin.BUILD_GROUP
             destinationDirectory = layout.buildDirectory.dir("distributions")
             archiveBaseName = extension.name.map { "plugin-$it" }
+            archiveVersion = extension.version
 
             dependsOn(jar)
 
