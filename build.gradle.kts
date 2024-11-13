@@ -2,13 +2,16 @@ plugins {
     `kotlin-dsl`
     alias(libs.plugins.gradle.publish)
     `maven-publish`
+    alias(libs.plugins.buildconfig)
 }
 
-group = "dev.arbjerg"
-version = "1.1.2"
+allprojects {
+    group = "dev.arbjerg"
+    version = "2.0.0"
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
 }
 
 kotlin {
@@ -17,6 +20,11 @@ kotlin {
 
 dependencies {
     compileOnly(kotlin("gradle-plugin"))
+}
+
+buildConfig {
+    packageName("dev.arbjerg.lavalink.gradle")
+    buildConfigField("String", "VERSION", provider { "\"${project.version}\"" })
 }
 
 gradlePlugin {

@@ -1,6 +1,8 @@
 package dev.arbjerg.lavalink.gradle
 
-import dev.arbjerg.lavalink.gradle.tasks.*
+import dev.arbjerg.lavalink.gradle.tasks.DownloadLavalinkTask
+import dev.arbjerg.lavalink.gradle.tasks.GeneratePluginPropertiesTask
+import dev.arbjerg.lavalink.gradle.tasks.RunLavalinkTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -60,6 +62,17 @@ private fun Project.configureDependencies(): Provider<Dependency> {
 
     dependencies {
         add("compileOnly", lavalink("plugin-api"))
+        if (plugins.hasPlugin("org.gradle.java")) {
+            add("annotationProcessor", "dev.arbjerg.lavalink:annotation-processor:${BuildConfig.VERSION}")
+            add("annotationProcessor", "org.pf4j:pf4j:3.12.1")
+        }
+        if (plugins.hasPlugin("org.jetbrains.kotlin")) {
+            if (plugins.hasPlugin("com.google.devtools.ksp")) {
+                add("ksp", "dev.arbjerg.lavalink:kotlin-symbol-processor:${BuildConfig.VERSION}")
+            } else {
+                logger.error("Please configure KSP for Kotlin support https://kotlinlang.org/docs/ksp-quickstart.html#add-a-processor")
+            }
+        }
     }
 
     return extension.serverVersion.map { serverVersion ->
