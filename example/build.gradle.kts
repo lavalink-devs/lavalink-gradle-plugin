@@ -17,7 +17,6 @@ dependencies {
     implementation(kotlin("stdlib", "2.0.21"))
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.7.3")
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.9.0")
-    annotationProcessor("dev.arbjerg", "lavalink-annotation-processor", "2.0.0")
 }
 
 java {

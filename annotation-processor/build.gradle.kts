@@ -6,7 +6,7 @@ plugins {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifactId = "lavalink-annotation-processor"
+            artifactId = "annotation-processor"
             from(components["java"])
         }
     }

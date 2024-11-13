@@ -6,7 +6,7 @@ plugins {
 }
 
 allprojects {
-    group = "dev.arbjerg"
+    group = "dev.arbjerg.lavalink"
     version = "2.0.0"
 
     repositories {
