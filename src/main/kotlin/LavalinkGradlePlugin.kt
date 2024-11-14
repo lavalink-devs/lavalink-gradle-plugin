@@ -26,6 +26,7 @@ class LavalinkGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             check(plugins.hasPlugin("org.gradle.java")) { "Please apply the Java/Kotlin plugin before Lavalink" }
+            configureConfigurations()
             val extension = configureExtension()
             configurePublishing()
             val serverDependency = configureDependencies()
@@ -35,6 +36,17 @@ class LavalinkGradlePlugin : Plugin<Project> {
 
     companion object {
         const val TASK_GROUP_NAME = "lavalink"
+    }
+}
+
+private fun Project.configureConfigurations() {
+    configurations {
+        val plugin by creating
+        val optionalPlugin by creating
+
+        named("compileOnly") {
+            extendsFrom(plugin, optionalPlugin)
+        }
     }
 }
 
