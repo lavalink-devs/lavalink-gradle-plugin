@@ -76,7 +76,6 @@ private fun Project.configureDependencies(): Provider<Dependency> {
         add("compileOnly", lavalink("plugin-api"))
         if (plugins.hasPlugin("org.gradle.java")) {
             add("annotationProcessor", "dev.arbjerg.lavalink:annotation-processor:${BuildConfig.VERSION}")
-            add("annotationProcessor", "org.pf4j:pf4j:3.12.1")
         }
         if (plugins.hasPlugin("org.jetbrains.kotlin")) {
             if (plugins.hasPlugin("com.google.devtools.ksp")) {

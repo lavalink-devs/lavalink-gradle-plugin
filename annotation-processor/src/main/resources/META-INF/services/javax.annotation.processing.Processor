@@ -1,1 +1,2 @@
-dev.arbjerg.lavalink.processor.LavalinkAnnotationProcessor
+dev.arbjerg.lavalink.processor.ConfigurationAnnotationProcessor
+dev.arbjerg.lavalink.processor.ExtensionAnnotationProcessor

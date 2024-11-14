@@ -3,6 +3,10 @@ plugins {
     `maven-publish`
 }
 
+dependencies {
+//    implementation(libs.pf4j)
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {

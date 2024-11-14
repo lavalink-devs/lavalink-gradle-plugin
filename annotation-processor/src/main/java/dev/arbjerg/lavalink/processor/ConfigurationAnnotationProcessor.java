@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@SupportedAnnotationTypes(LavalinkAnnotationProcessor.SPRING_CONFIGURATION)
-public class LavalinkAnnotationProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes(ConfigurationAnnotationProcessor.SPRING_CONFIGURATION)
+public class ConfigurationAnnotationProcessor extends AbstractProcessor {
 
     public static final String SPRING_CONFIGURATION = "org.springframework.context.annotation.Configuration";
     private TypeElement springConfigurationElement;
