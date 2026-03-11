@@ -19,7 +19,7 @@ interface LavalinkExtension {
     val apiVersion: Property<String>
 
     /**
-     * The version of the server (Can be checked [here](https://maven.arbjerg.dev/)).
+     * The version of the server (Can be checked [here](https://maven.lavalink.dev/)).
      *
      * @see gitHash
      *
